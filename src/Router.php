@@ -1,7 +1,10 @@
 <?php
 
+namespace src;
+
 class Router {
     private $routes = [];
+
     public function addRoute(string $path, string $handler) {
         $this->routes[$path] = $handler;
     }
@@ -20,12 +23,13 @@ class Router {
                 if (method_exists($controller, $method)) {
                     return $controller->$method();
                 } else {
-                    throw new Exception("Méthode '$method' introuvable dans '$controllerClass'.");
+                    throw new \Exception("Méthode '$method' introuvable dans '$controllerClass'.");
                 }
             } else {
-                throw new Exception("Classe '$controllerClass' introuvable.");
+                throw new \Exception("Classe '$controllerClass' introuvable.");
             }
         }
-        throw new Exception("Route non trouvée.");
+
+        throw new \Exception("Route non trouvée.");
     }
 }
