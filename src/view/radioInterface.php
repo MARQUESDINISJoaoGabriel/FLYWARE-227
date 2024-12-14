@@ -1,3 +1,17 @@
+<?php
+// src/view/radioInterface.php
+
+// Gestion de l'enregistrement dans le logbook
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['frequency'])) {
+    $message = htmlspecialchars($_POST['message']);
+    $frequency = htmlspecialchars($_POST['frequency']);
+    $timestamp = date('Y-m-d H:i:s');
+
+    $entry = "[$timestamp] Fréquence : $frequency MHz - Message : $message" . PHP_EOL;
+
+    file_put_contents('../../logbook.txt', $entry, FILE_APPEND); // Ajout dans logbook.txt
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -47,43 +61,71 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>FLYWARE-227</h1>
-        <p>Radio post-apocalyptique</p>
-    </header>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Radio Interface</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: black; color: #00ffcc; text-align: center; }
+        .radio-container { margin: 50px auto; }
+        .slider { width: 80%; margin: 20px auto; }
+        button { padding: 10px; background: #00ffcc; color: black; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Interface Radio</h1>
+    <a href="../Router.php?page=home" style="color: #00ffcc;">Retour à l'accueil</a>
 
     <div class="radio-container">
-        <!-- Affichage de la fréquence actuelle -->
-        <div class="frequency-display" id="frequency-display">
-            Fréquence : 50.0 MHz
-        </div>
+        <p id="frequency-display">Fréquence : 50.0 MHz</p>
+        <input type="range" min="0" max="100" step="0.1" value="50" id="frequency" class="slider">
+        <div id="message">...</div>
 
-        <!-- Zone ASCII pour les ondes -->
-        <div class="ascii-signal" id="ascii-signal">
-            ...
-        </div>
-
-        <!-- Curseur pour la fréquence -->
-        <input type="range" min="0" max="100" step="0.1" value="50" class="slider" id="frequency">
-
-        <!-- Texte du message capté -->
-        <div class="message" id="message">...</div>
+        <!-- Formulaire caché pour sauvegarder dans le logbook -->
+        <form method="POST" id="logbook-form" style="display:none;">
+            <input type="hidden" name="frequency" id="hidden-frequency">
+            <input type="hidden" name="message" id="hidden-message">
+            <button type="submit">Écrire dans le LogBook</button>
+        </form>
     </div>
 
     <script>
-        const frequencyZones = [
-            { min: 70, max: 80, text: "Alerte ! Tempête en approche...", signalType: "high" },
-            { min: 30, max: 40, text: "Évacuation imminente... Secteur 9.", signalType: "low" }
-        ];
 
+        // PARTIE BACKEND
+
+        const zones = [
+            { min: 70, max: 80, text: "Alerte ! Tempête en approche..." },
+            { min: 30, max: 40, text: "Évacuation imminente... Secteur 9." }
+        ];
         const slider = document.getElementById('frequency');
-        const asciiSignalDiv = document.getElementById('ascii-signal');
         const messageDiv = document.getElementById('message');
-        const frequencyDisplay = document.getElementById('frequency-display');
+        const freqDisplay = document.getElementById('frequency-display');
+        const logbookForm = document.getElementById('logbook-form');
+        const hiddenFrequency = document.getElementById('hidden-frequency');
+        const hiddenMessage = document.getElementById('hidden-message');
+
+        slider.addEventListener('input', () => {
+            const freq = parseFloat(slider.value).toFixed(1);
+            freqDisplay.textContent = `Fréquence : ${freq} MHz`;
+            messageDiv.textContent = "...";
+            logbookForm.style.display = "none";
+
+            zones.forEach(zone => {
+                if (freq >= zone.min && freq <= zone.max) {
+                    messageDiv.textContent = zone.text;
+                    hiddenFrequency.value = freq;
+                    hiddenMessage.value = zone.text;
+                    logbookForm.style.display = "block";
+                }
+            });
+        });
+
+        // PARTIE ANIMATION
 
         let animationInterval;
         let staticNoiseInterval;
-        let messageInterval; // Pour l'animation du message
+        let messageInterval;
         let currentMessage = null; // Gérer l'état du message
         let isInMessageZone = false; // Pour savoir si on est dans une zone active
 
