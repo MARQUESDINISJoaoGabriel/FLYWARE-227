@@ -6,10 +6,10 @@ use \src\Router;
 $router = new Router();
 
 $router->addRoute('/FLYWARE-227', 'RadioController@list');
-$router->addRoute('/', 'RadioController@list');
-$router->addRoute('/radio', 'RadioController@list');
-$router->addRoute('/radio/message', 'RadioController@message');
-$router->addRoute('/radio/interface', 'RadioController@interface');
+$router->addRoute('/FLYWARE-227/radio', 'RadioController@list');
+$router->addRoute('/FLYWARE-227/radio/message', 'RadioController@message');
+$router->addRoute('/FLYWARE-227/radio/interface', 'RadioController@interface');
+
 
 try {
     $router->dispatch($_SERVER['REQUEST_URI']);

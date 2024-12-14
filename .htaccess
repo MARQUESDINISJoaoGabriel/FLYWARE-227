@@ -1,7 +1,7 @@
 RewriteEngine On
-RewriteBase /FLYWARE-227/  # Si ton projet est dans ce dossier
+RewriteBase /FLYWARE-227/
 
-# Redirige toutes les requêtes vers index.php
+# Rediriger toutes les requêtes vers index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]

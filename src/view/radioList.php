@@ -1,10 +1,13 @@
+<?php
+$basePath = dirname($_SERVER['SCRIPT_NAME']);
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLYWARE-227 Radio</title>
-    <link rel="stylesheet" href="../../public/styles.css">
+    <link rel="stylesheet" href="<?= $basePath ?>/public/styles.css">
 </head>
 <body>
     <header>
@@ -16,7 +19,7 @@
             <div class="card">
                 <h2><?= htmlspecialchars($message['title']) ?></h2>
                 <p><?= htmlspecialchars($message['content']) ?></p>
-                <a href="/radio/message?id=<?= htmlspecialchars($message['id']) ?>">Lire plus</a>
+                <a href="<?= $basePath ?>/radio/message?id=<?= htmlspecialchars($message['id']) ?>">Lire plus</a>
             </div>
         <?php endforeach; ?>
     </main>
