@@ -1,22 +1,23 @@
 <?php
-
-namespace src\model;
-
 class RadioModel {
-    private $messages = [
-        ["id" => 1, "title" => "A trouver.", "frequence" => "14.0"],
-    ];
+    private $logFile;
 
-    public function getMessages() {
-        return $this->messages;
+    public function __construct($logFile = '../../logbook.txt') {
+        $this->logFile = $logFile;
     }
 
-    public function getMessageById($id) {
-        foreach ($this->messages as $message) {
-            if ($message['id'] == $id) {
-                return $message;
-            }
-        }
-        return null;
+    public function getLogs() {
+        return file_exists($this->logFile) ? file($this->logFile) : [];
+    }
+
+    public function addLog($frequency, $message) {
+        $timestamp = date('Y-m-d H:i:s');
+        $entry = "[$timestamp] Fréquence : $frequency MHz - Message : $message" . PHP_EOL;
+        file_put_contents($this->logFile, $entry, FILE_APPEND);
+    }
+
+    public function clearLogs() {
+        file_put_contents($this->logFile, '');
     }
 }
+?>

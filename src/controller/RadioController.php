@@ -1,34 +1,32 @@
 <?php
-
-namespace src\controller;
-
-use src\model\RadioModel;
+require_once __DIR__ . '/../model/RadioModel.php';
 
 class RadioController {
-    public function list() {
-        $model = new RadioModel();
-        $messages = $model->getMessages();
-        include __DIR__ . '/../view/radioList.php';
+    private $model;
+
+    public function __construct() {
+        $this->model = new RadioModel();
     }
 
-    public function interface() {
-        $model = new RadioModel();
-        include __DIR__ . '/../view/radioInterface.php';
-    }
-    
-
-    public function message() {
-        $model = new RadioModel();
-        $id = $_GET['id'] ?? null;
-        if ($id !== null) {
-            $message = $model->getMessageById($id);
-            if ($message) {
-                include __DIR__ . '/../view/radioMessage.php';
-            } else {
-                echo "Message introuvable.";
-            }
-        } else {
-            echo "ID non fourni.";
+    public function handleRequest() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['frequency'])) {
+            $this->model->addLog($_POST['frequency'], $_POST['message']);
         }
+        $this->showRadioPage();
+    }
+
+    public function showRadioPage() {
+        require 'view/radioInterface.php';
+    }
+
+    public function showLogbook() {
+        $logs = $this->model->getLogs();
+        require 'view/radioList.php';
+    }
+
+    public function clearLogbook() {
+        $this->model->clearLogs();
+        $this->showLogbook();
     }
 }
+?>

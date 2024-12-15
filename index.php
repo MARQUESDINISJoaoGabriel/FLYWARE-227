@@ -1,3 +1,3 @@
 <?php
-header("Location: Router.php?page=home");
+header("Location: src/Router.php");
 exit;

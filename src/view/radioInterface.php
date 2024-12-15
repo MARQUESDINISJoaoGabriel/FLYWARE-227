@@ -1,14 +1,3 @@
-<?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['frequency'])) {
-    $message = htmlspecialchars($_POST['message']);
-    $frequency = htmlspecialchars($_POST['frequency']);
-    $timestamp = date('Y-m-d H:i:s');
-
-    $entry = "[$timestamp] Fréquence : $frequency MHz - Message : $message" . PHP_EOL;
-
-    file_put_contents('../../logbook.txt', $entry, FILE_APPEND);
-}
-?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
