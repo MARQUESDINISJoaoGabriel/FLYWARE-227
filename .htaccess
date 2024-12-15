@@ -1,6 +1,5 @@
 RewriteEngine On
-RewriteBase /FLYWARE-227/
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+RewriteRule ^(.*)$ Router.php?page=$1 [L,QSA]

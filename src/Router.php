@@ -1,15 +1,21 @@
 <?php
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
-$validPages = [
-    'home' => 'view/home.php',
-    'radio' => 'view/radioInterface.php',
-    'logbook' => 'view/radioList.php'
-];
+switch ($page) {
+    case 'home':
+        require_once 'view/home.php';
+        break;
 
-if (array_key_exists($page, $validPages)) {
-    require $validPages[$page];
-} else {
-    echo "Erreur 404 - Route Non Trouvée";
-    exit;
+    case 'radio':
+        require_once 'view/radioInterface.php';
+        break;
+
+    case 'logbook':
+        require_once 'view/radioList.php';
+        break;
+
+    default:
+        require_once 'view/404.php';
+        break;
 }
+?>

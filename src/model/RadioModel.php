@@ -4,8 +4,7 @@ namespace src\model;
 
 class RadioModel {
     private $messages = [
-        ["id" => 1, "title" => "Signal perdu", "content" => "Un message mystérieux trouvé sur les ondes."],
-        ["id" => 2, "title" => "Alerte tempête", "content" => "Une tempête approche du secteur 5."],
+        ["id" => 1, "title" => "A trouver.", "frequence" => "14.0"],
     ];
 
     public function getMessages() {

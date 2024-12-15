@@ -1,7 +1,4 @@
 <?php
-// src/view/radioInterface.php
-
-// Gestion de l'enregistrement dans le logbook
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['frequency'])) {
     $message = htmlspecialchars($_POST['message']);
     $frequency = htmlspecialchars($_POST['frequency']);
@@ -9,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['fr
 
     $entry = "[$timestamp] Fréquence : $frequency MHz - Message : $message" . PHP_EOL;
 
-    file_put_contents('../../logbook.txt', $entry, FILE_APPEND); // Ajout dans logbook.txt
+    file_put_contents('../../logbook.txt', $entry, FILE_APPEND);
 }
 ?>
 <!DOCTYPE html>
@@ -17,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['fr
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLYWARE-227 - Radio</title>
+    <title>FLYWARE-227</title>
     <link rel="stylesheet" href="/public/styles.css">
     <style>
         body {
@@ -27,6 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['fr
             text-align: center;
             margin: 0;
             padding: 0;
+            animation: backgroundNoise 5s infinite;
+        }
+
+        #static-noiseEFFECT {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: repeating-linear-gradient(
+                transparent, 
+                transparent 2px, 
+                rgba(255, 255, 255, 0.2) 2px, 
+                rgba(255, 255, 255, 0.2) 4px
+            );
+            opacity: 0.15;
+            z-index: -4;
+            animation: noise-animation 0.15s infinite;
         }
 
         .radio-container {
@@ -57,219 +72,175 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['fr
             font-size: 1.3rem;
             color: #ff4500;
             min-height: 40px;
+            animation: blink 1s infinite;
         }
+
+        button {
+            padding: 10px;
+            background: #00ffcc;
+            color: black;
+            border: none;
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+        }
+
+        .static-noise {
+            font-family: monospace;
+            color: #00ffcc;
+            white-space: pre;
+            margin-top: 20px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            height: 150px;
+            overflow: hidden;
+        }
+
+        .wave-effect {
+            font-family: monospace;
+            color: #00ffcc;
+            white-space: pre;
+            margin-top: 20px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            height: 150px;
+            overflow: hidden;
+            display: none;
+        }
+
+        @keyframes noise-animation {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, 5px); }
+            50% { transform: translate(5px, -5px); }
+            75% { transform: translate(-5px, -5px); }
+            100% { transform: translate(5px, 5px); }
+        }
+
+
     </style>
 </head>
 <body>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Radio Interface</title>
-    <style>
-        body { font-family: 'Courier New', monospace; background: black; color: #00ffcc; text-align: center; }
-        .radio-container { margin: 50px auto; }
-        .slider { width: 80%; margin: 20px auto; }
-        button { padding: 10px; background: #00ffcc; color: black; border: none; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <h1>Interface Radio</h1>
-    <a href="../Router.php?page=home" style="color: #00ffcc;">Retour à l'accueil</a>
+    <h1>FLYWARE-227</h1>
+    <a href="Router.php?page=home" style="color: #00ffcc;">Retour à l'accueil</a>
 
     <div class="radio-container">
-        <p id="frequency-display">Fréquence : 50.0 MHz</p>
-        <input type="range" min="0" max="100" step="0.1" value="50" id="frequency" class="slider">
+        <p id="frequency-display">Fréquence : 187.0 MHz</p>
+        <input type="range" min="0" max="375" step="0.1" value="187" id="frequency" class="slider">
+        
         <div id="message">...</div>
+        <br><br><hr><hr><br><br>
 
-        <!-- Formulaire caché pour sauvegarder dans le logbook -->
         <form method="POST" id="logbook-form" style="display:none;">
             <input type="hidden" name="frequency" id="hidden-frequency">
             <input type="hidden" name="message" id="hidden-message">
-            <button type="submit">Écrire dans le LogBook</button>
+            <button type="submit">[ ENREGISTRER ]</button>
         </form>
+        
+        <div id="static-noise" class="static-noise"></div>
+        
+        <div id="wave-effect" class="wave-effect"></div>
+
+        <div id="static-noiseEFFECT" class="static-noiseEFFECT"></div>
     </div>
 
     <script>
 
-        // PARTIE BACKEND
+        const audio = new Audio('../assets/RadioStatic.mp3');
+        audio.load();
+        audio.loop = true;
+        audio.play();
 
+        // PARTIE BACKEND
         const zones = [
-            { min: 70, max: 80, text: "Alerte ! Tempête en approche..." },
-            { min: 30, max: 40, text: "Évacuation imminente... Secteur 9." }
+            { min: 70, max: 80, text: "Ici Delta 7 - Tempête en approche... Vers CRASHSITE - Consultez..." },
+            { min: 30, max: 40, text: "Évacuation disponible,    secteur 9 Zone 48" },
+            { min: 90, max: 100, text: "Tu disais quoi Jack..?            C'est complètement...     malade ce qu'il se passe..." },
+            { min: 136, max: 166, text: "C'est compliqué en ce moment        je sais,               depuis le crashdown du COLLAPSE-21,       c'est L'agency qui..." },
+            { min: 180, max: 190, text: "Fréquence de secours     disponible, standby." },
+            { min: 200, max: 210, text: "Je ne suis plus...               C'est pas (?????)..." },
+            { min: 260, max: 270, text: ". . . - - - . . ." },
+            { min: 300, max: 315, text: "ZETA, DOUZE, U,   V,    B,   SEPTA,     SIXANTE,                       DELTA, ECHO, ECHO, RALLY.     DIX-SEPT,   CINQ,    DOUZE,     SOIXANTE,   " },
         ];
+        
         const slider = document.getElementById('frequency');
         const messageDiv = document.getElementById('message');
         const freqDisplay = document.getElementById('frequency-display');
         const logbookForm = document.getElementById('logbook-form');
         const hiddenFrequency = document.getElementById('hidden-frequency');
         const hiddenMessage = document.getElementById('hidden-message');
+        const staticNoiseDiv = document.getElementById('static-noise');
+        const waveEffectDiv = document.getElementById('wave-effect');
 
-        slider.addEventListener('input', () => {
-            const freq = parseFloat(slider.value).toFixed(1);
-            freqDisplay.textContent = `Fréquence : ${freq} MHz`;
-            messageDiv.textContent = "...";
-            logbookForm.style.display = "none";
+        let staticInterval;
+        let waveInterval;
 
-            zones.forEach(zone => {
-                if (freq >= zone.min && freq <= zone.max) {
-                    messageDiv.textContent = zone.text;
-                    hiddenFrequency.value = freq;
-                    hiddenMessage.value = zone.text;
-                    logbookForm.style.display = "block";
+        function typeMessage(message, element) {
+    let index = 0;
+    element.textContent = '';
+    const interval = setInterval(() => {
+        if (index < message.length) {
+            element.textContent += message[index];
+            index++;
+        } else {
+            clearInterval(interval);
+        }
+    }, 50);
+}
+
+slider.addEventListener('input', () => {
+    const freq = parseFloat(slider.value).toFixed(1);
+    freqDisplay.textContent = `Fréquence : ${freq} MHz`;
+    messageDiv.textContent = "...";
+    logbookForm.style.display = "none";
+    staticNoiseDiv.style.display = "block";
+    waveEffectDiv.style.display = "none";
+
+    zones.forEach(zone => {
+        if (freq >= zone.min && freq <= zone.max) {
+            typeMessage(zone.text, messageDiv);
+            hiddenFrequency.value = freq;
+            hiddenMessage.value = zone.text;
+            logbookForm.style.display = "block";
+            staticNoiseDiv.style.display = "none";
+            waveEffectDiv.style.display = "block";
+            startWaveEffect();
+        }
+    });
+});
+
+        function generateStaticNoise() {
+            const characters = ['*', '#', '    ', '@', '   ', '   ', '!', '.', '-', ' '];
+            let noise = '';
+            for (let i = 0; i < 30; i++) {
+                for (let j = 0; j < 100; j++) {
+                    noise += characters[Math.floor(Math.random() * characters.length)];
                 }
-            });
-        });
-
-        // PARTIE ANIMATION
-
-        let animationInterval;
-        let staticNoiseInterval;
-        let messageInterval;
-        let currentMessage = null; // Gérer l'état du message
-        let isInMessageZone = false; // Pour savoir si on est dans une zone active
-
-        // Modèles pour l'animation ASCII
-        const signalPatterns = {
-            noSignal: [
-                "     .     .     .     .     .     .     ",
-                "     .     .     .     .     .     .     "
-            ],
-            lowSignal: [
-                "~   ~    ~   ~    ~   ~    ~   ~",
-                "   ~ ~      ~ ~      ~ ~      ~ ~",
-                "~   ~    ~   ~    ~   ~    ~   ~"
-            ],
-            highSignal: [
-                "~~ ~~~ ~~ ~~~ ~~ ~~~ ~~ ~~~ ~~ ~~~",
-                " ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ",
-                "~~ ~~~ ~~ ~~~ ~~ ~~~ ~~ ~~~ ~~ ~~~"
-            ]
-        };
-
-        // Fonction pour démarrer l'animation de l'onde
-        function startSignalAnimation(pattern) {
-            clearInterval(animationInterval); // Arrêter l'animation précédente
-            let index = 0;
-
-            // Animation perturbée
-            animationInterval = setInterval(() => {
-                const perturbedPattern = pattern.map(line => addNoiseToLine(line));
-                asciiSignalDiv.textContent = perturbedPattern.join("\n");
-                index = (index + 1) % pattern.length;
-            }, 15); // Vitesse de l'animation
-        }
-
-        // Ajouter du bruit aléatoire pour simuler un signal perturbé
-        function addNoiseToLine(line) {
-            const chars = ['...', '~~', '---', '***', ' '];
-            return line.split("").map(char => {
-                if (Math.random() > 0.9) { // 10% de chance de perturbation
-                    return chars[Math.floor(Math.random() * chars.length)];
-                }
-                return char;
-            }).join("");
-        }
-
-        function scrambleText(realText, duration = 2000) {
-            const chars = "0# -*";
-            let scrambled = '';
-            let iteration = 0;
-
-            const interval = setInterval(() => {
-                scrambled = realText.split('').map((char, index) => {
-                    if (index < iteration) return char;
-                    return chars[Math.floor(Math.random() * chars.length)];
-                }).join('');
-                messageDiv.textContent = scrambled;
-
-                if (iteration >= realText.length) clearInterval(interval);
-                iteration++;
-            }, duration / realText.length);
-        }
-
-        // Fonction pour démarrer l'animation ASCII des astérisques lorsque le message est actif
-        function startMessageAnimation() {
-            clearInterval(staticNoiseInterval); // Arrêter le bruit statique
-            let index = 0;
-
-            // Animation des astérisques
-            messageInterval = setInterval(() => {
-                const randomLine = generateRandomAsteriskLine();
-                asciiSignalDiv.textContent = randomLine;
-                index++;
-            }, 100); // Intervalle de changement pour les astérisques
-        }
-
-        // Générer une ligne d'astérisques et espaces aléatoires
-        function generateRandomAsteriskLine() {
-            const lineLength = 50; // Longueur de la ligne
-            let line = '';
-            for (let i = 0; i < lineLength; i++) {
-                const randomChar = Math.random() > 0.5 ? '*' : ' '; // Alternance entre astérisques et espaces
-                line += randomChar;
+                noise += '\n';
             }
-            return line;
+            staticNoiseDiv.textContent = noise;
         }
 
-        // Fonction pour réactiver le bruit statique après la fin du message
-        function stopMessageAnimation() {
-            clearInterval(messageInterval); // Arrêter l'animation du message
-            startStaticNoise(); // Réactiver le bruit statique
-        }
-
-        // Fonction pour maintenir l'animation de perturbation même pendant le signal
         function startStaticNoise() {
-            clearInterval(staticNoiseInterval);
-            staticNoiseInterval = setInterval(() => {
-                // Perturber légèrement en continu
-                const noisePattern = [
-                    "     .     .     .     .     .     .     ",
-                    "     .     .     .     .     .     .     "
-                ];
-                const perturbedNoise = noisePattern.map(line => addNoiseToLine(line));
-                asciiSignalDiv.textContent = perturbedNoise.join("\n");
-            }, 30); // Intervalle de perturbation statique
+            staticInterval = setInterval(generateStaticNoise, 100);
         }
 
-        // Gestion du curseur
-        slider.addEventListener('input', () => {
-            const currentFrequency = parseFloat(slider.value).toFixed(1);
-            frequencyDisplay.textContent = `Fréquence : ${currentFrequency} MHz`;
-            messageDiv.textContent = "";
-
-            let messageFound = false;
-            isInMessageZone = false; // Réinitialiser l'état de zone
-
-            frequencyZones.forEach(zone => {
-                if (currentFrequency >= zone.min && currentFrequency <= zone.max) {
-                    isInMessageZone = true;
-                    if (currentMessage !== zone.text) {
-                        currentMessage = zone.text; // Mémoriser le message actuel
-                        scrambleText(zone.text);
-                        startSignalAnimation(signalPatterns[zone.signalType]);
-                        startMessageAnimation(); // Lancer l'animation des astérisques
-                    }
-                    messageFound = true;
+        function generateWaveEffect() {
+            const characters = ['-',' ','~','  '];
+            let noise = '';
+            for (let i = 0; i < 30; i++) {
+                for (let j = 0; j < 100; j++) {
+                    noise += characters[Math.floor(Math.random() * characters.length)];
                 }
-            });
-
-            if (!messageFound) {
-                if (isInMessageZone === false) {
-                    currentMessage = null; // Réinitialiser le message lorsque l'on sort de la zone
-                }
-                startSignalAnimation(signalPatterns.noSignal);
-                stopMessageAnimation(); // Arrêter l'animation des astérisques
+                noise += '\n';
             }
+            waveEffectDiv.textContent = noise;
+        }
 
-            // Toujours ajouter le bruit statique en arrière-plan
-            if (!isInMessageZone) {
-                startStaticNoise();
-            }
-        });
+        function startWaveEffect() {
+            if (waveInterval) clearInterval(waveInterval);
+            waveInterval = setInterval(generateWaveEffect, 45);
+        }
 
-        // Initialiser avec aucun signal
-        startSignalAnimation(signalPatterns.noSignal);
+        startStaticNoise();
     </script>
 </body>
 </html>
