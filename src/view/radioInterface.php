@@ -120,10 +120,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['fr
 </head>
 <body>
     <h1>FLYWARE-227</h1>
-    <a href="Router.php?page=home" style="color: #00ffcc;">Retour à l'accueil</a>
+    <a href="Router.php?page=home" style="color: #00ffcc;">[ACCEUIL]</a>
 
     <div class="radio-container">
-        <p id="frequency-display">Fréquence : 187.0 MHz</p>
+        <p id="frequency-display">[FREQUENCE: 187.0 MHz]</p>
         <input type="range" min="0" max="375" step="0.1" value="187" id="frequency" class="slider">
         
         <div id="message">...</div>
@@ -188,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'], $_POST['fr
 
 slider.addEventListener('input', () => {
     const freq = parseFloat(slider.value).toFixed(1);
-    freqDisplay.textContent = `Fréquence : ${freq} MHz`;
+    freqDisplay.textContent = `[FREQUENCE: ${freq} MHz]`;
     messageDiv.textContent = "...";
     logbookForm.style.display = "none";
     staticNoiseDiv.style.display = "block";

@@ -68,10 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clear_logbook'])) {
 <body>
     <!-- Headers -->
     <h1>FLYWARE-227</h1>
-    <a href="Router.php?page=home" style="color: #00ffcc;">Retour à l'accueil</a>
+    <a href="Router.php?page=home" style="color: #00ffcc;">[ACCEUIL]</a>
     <form method="POST" id="clear-form">
     <!-- Bouton d'effacement -->
-    <button type="submit" name="clear_logbook" id="play-sound">Effacer toutes les entrées</button>
+    <button type="submit" name="clear_logbook" id="play-sound">[EFFACER TOUT]</button>
     </form>
 
 
@@ -82,7 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clear_logbook'])) {
                 <div class="log-entry"><?php echo htmlspecialchars($entry); ?></div>
             <?php endforeach; ?>
         <?php else: ?>
-            <p>Aucun message enregistré.</p>
+            <p>AUCUN MESSAGE ENREGISTRE</p>
+            <p>NOTE: POUR ENREGISTRER DES MESSAGES : -> [RADIO] -> [ENREGISTRER]</p>
         <?php endif; ?>
     </div>
     <div id="static-noiseEFFECT" class="static-noiseEFFECT"></div>

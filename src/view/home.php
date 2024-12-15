@@ -60,8 +60,8 @@ if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 <body>
     <h1>FLYWARE-227</h1>
     <p>SESSION DEMAREE - BIENVENUE [<?php echo $user_ip; ?>]</p>
-    <a href="Router.php?page=radio">Accéder à la Radio</a>
-    <a href="Router.php?page=logbook">Voir le LogBook</a>
+    <a href="Router.php?page=radio">[RADIO]</a>
+    <a href="Router.php?page=logbook">[LOGS]</a>
     <div id="static-noiseEFFECT" class="static-noiseEFFECT"></div>
     
 </body>
